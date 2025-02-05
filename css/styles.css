@@ -1,0 +1,15 @@
+body {
+    background-color: #121212;
+    color: #ffffff;
+}
+
+.card {
+    background-color: #1e1e1e;
+    color: white;
+    border: 1px solid #333;
+}
+
+.card a {
+    background-color: #e50914;
+    border: none;
+}

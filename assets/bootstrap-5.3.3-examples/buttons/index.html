@@ -1,16 +1,21 @@
 <!doctype html>
 <html lang="en" data-bs-theme="auto">
-  <head><script src="../js/login/color-modes.js"></script>
+  <head><script src="../assets/js/color-modes.js"></script>
 
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
-    <meta name="author" content="Igo">
-    <title>Login - PobreFlix</title>
+    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+    <meta name="generator" content="Hugo 0.122.0">
+    <title>Buttons · Bootstrap v5.3</title>
+
+    <link rel="canonical" href="https://getbootstrap.com/docs/5.3/examples/buttons/">
+
+    
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3">
 
-<link href="../css/login/bootstrap.min.css" rel="stylesheet">
+<link href="../assets/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
       .bd-placeholder-img {
@@ -91,10 +96,9 @@
       }
     </style>
 
-    <!-- Custom styles for this template -->
-    <link href="../css/login/sign-in.css" rel="stylesheet">
+    
   </head>
-  <body class="d-flex align-items-center py-4 bg-body-tertiary">
+  <body>
     <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
       <symbol id="check2" viewBox="0 0 16 16">
         <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>
@@ -147,34 +151,89 @@
     </div>
 
     
-<main class="form-signin w-100 m-auto">
-  <form id="loginForm">
-    <img class="mb-4" src="../image/Flux_Dev_Create_a_logo_inspired_by_Netflixs_logo_but_with_the__3.jpeg" alt="" width="72" height="57">
-    <h1 class="h3 mb-3 fw-normal">Entrar</h1>
+<svg xmlns="http://www.w3.org/2000/svg" class="d-none">
+  <symbol id="arrow-right-short" viewBox="0 0 16 16">
+    <path fill-rule="evenodd" d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"/>
+  </symbol>
+  <symbol id="x-lg" viewBox="0 0 16 16">
+    <path fill-rule="evenodd" d="M13.854 2.146a.5.5 0 0 1 0 .708l-11 11a.5.5 0 0 1-.708-.708l11-11a.5.5 0 0 1 .708 0Z"/>
+    <path fill-rule="evenodd" d="M2.146 2.146a.5.5 0 0 0 0 .708l11 11a.5.5 0 0 0 .708-.708l-11-11a.5.5 0 0 0-.708 0Z"/>
+  </symbol>
+</svg>
 
-    <div class="form-floating">
-      <input type="email" class="form-control" id="email" placeholder="name@example.com">
-      <label for="floatingInput">Email address</label>
-    </div>
-    <div class="form-floating">
-      <input type="password" class="form-control" id="password" placeholder="Password">
-      <label for="floatingPassword">Password</label>
-    </div>
+<div class="d-flex gap-2 justify-content-center py-5">
+  <button class="btn btn-primary rounded-pill px-3" type="button">Primary</button>
+  <button class="btn btn-secondary rounded-pill px-3" type="button">Secondary</button>
+  <button class="btn btn-success rounded-pill px-3" type="button">Success</button>
+  <button class="btn btn-danger rounded-pill px-3" type="button">Danger</button>
+  <button class="btn btn-warning rounded-pill px-3" type="button">Warning</button>
+  <button class="btn btn-info rounded-pill px-3" type="button">Info</button>
+  <button class="btn btn-light rounded-pill px-3" type="button">Light</button>
+  <button class="btn btn-dark rounded-pill px-3" type="button">Dark</button>
+  <button class="btn btn-link rounded-pill px-3" type="button">Link</button>
+</div>
 
-    <div class="form-check text-start my-3">
-      <input class="form-check-input" type="checkbox" value="remember-me" id="flexCheckDefault">
-      <label class="form-check-label" for="flexCheckDefault">
-        lembre de mim
-      </label>
-    </div>
-    <button class="btn btn-primary w-100 py-2 mb-2" type="submit">Sign in</button>
-    <button class="btn btn-secondary w-100 py-2" type="button" onclick="window.location.href='register.html'">Cadastrar</button>
+<div class="b-example-divider"></div>
 
-    <p class="mt-5 mb-3 text-body-secondary">&copy; 2025 PobreFlix. Todos os direitos reservados.</p>
-    <p id="errorMessage" class="text-danger"></p>
-  </form>
-</main>
-<script src="../js/login/bootstrap.bundle.min.js"></script>
-<script src="../js/login/script-login.js"></script>
+<div class="col-lg-6 col-xxl-4 my-5 mx-auto">
+  <div class="d-grid gap-2">
+    <button class="btn btn-outline-secondary" type="button">Secondary action</button>
+    <button class="btn btn-primary" type="button">Primary action</button>
+  </div>
+</div>
+
+<div class="b-example-divider"></div>
+
+<div class="d-flex gap-2 justify-content-center py-5">
+  <button class="btn btn-primary d-inline-flex align-items-center" type="button">
+    Primary icon
+    <svg class="bi ms-1" width="20" height="20"><use xlink:href="#arrow-right-short"/></svg>
+  </button>
+  <button class="btn btn-outline-secondary d-inline-flex align-items-center" type="button">
+    Secondary icon
+    <svg class="bi ms-1" width="20" height="20"><use xlink:href="#arrow-right-short"/></svg>
+  </button>
+</div>
+
+<div class="b-example-divider"></div>
+
+<div class="d-flex gap-2 justify-content-center py-5">
+  <button class="btn btn-primary" type="button" disabled>
+    <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+    <span class="visually-hidden" role="status">Loading...</span>
+  </button>
+  <button class="btn btn-primary" type="button" disabled>
+    <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+    <span role="status">Loading...</span>
+  </button>
+</div>
+
+<div class="b-example-divider"></div>
+
+<div class="d-flex gap-2 justify-content-center pt-5 pb-4">
+  <button class="btn btn-primary rounded-circle p-2 lh-1" type="button">
+    <svg class="bi" width="16" height="16"><use xlink:href="#x-lg"/></svg>
+    <span class="visually-hidden">Dismiss</span>
+  </button>
+  <button class="btn btn-outline-primary rounded-circle p-2 lh-1" type="button">
+    <svg class="bi" width="16" height="16"><use xlink:href="#x-lg"/></svg>
+    <span class="visually-hidden">Dismiss</span>
+  </button>
+</div>
+
+<div class="d-flex gap-2 justify-content-center pb-5">
+  <button class="btn btn-primary rounded-circle p-3 lh-1" type="button">
+    <svg class="bi" width="24" height="24"><use xlink:href="#x-lg"/></svg>
+    <span class="visually-hidden">Dismiss</span>
+  </button>
+  <button class="btn btn-outline-primary rounded-circle p-3 lh-1" type="button">
+    <svg class="bi" width="24" height="24"><use xlink:href="#x-lg"/></svg>
+    <span class="visually-hidden">Dismiss</span>
+  </button>
+</div>
+
+<div class="b-example-divider"></div>
+<script src="../assets/dist/js/bootstrap.bundle.min.js"></script>
+
     </body>
 </html>

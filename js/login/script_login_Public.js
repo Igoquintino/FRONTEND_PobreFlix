@@ -19,7 +19,7 @@ document.getElementById("loginForm").addEventListener("submit", async (event) =>
         // Se o login for bem-sucedido
         if (response.ok) {
             localStorage.setItem("token", data.token); // Salva o token no localStorage
-            window.location.href = "/index.html"; // Redireciona para o dashboard
+            window.location.href = "./homepage_user.html"; // Redireciona para o dashboard
         } else {
             document.getElementById("errorMessage").textContent = data.message; // Exibe mensagem de erro
         }

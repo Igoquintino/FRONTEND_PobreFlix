@@ -83,5 +83,5 @@ Este projeto é de código aberto e está sob a **Licença MIT**.
 
 ---
 
-🚀 By [Igo Quintino](https://github.com/Igoquintino)
+🚀 Feito com 💙 por [Igo Quintino](https://github.com/Igoquintino)
 

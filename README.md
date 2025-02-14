@@ -65,7 +65,7 @@ Por exemplo:
 ✔️ Formulário de login e cadastro  
 ✔️ Responsividade com Bootstrap 5  
 ✔️ Autenticação integrada ao backend  
-✔️ Atualizações de informções(em desenvolvimento)
+✔️ Atualizações de informções(em desenvolvimento)  
 ✔️ O player integrado ao pagina(em desenvolvimento)
 
 ---

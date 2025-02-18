@@ -1,101 +1,165 @@
-// Função para buscar por título
-async function fetchByTitle(title) {
-    fetchCatalog(`http://localhost:3000/catalog/${title}`);
-};
 
+document.addEventListener("DOMContentLoaded", function () {
+    const userId = localStorage.getItem("userId"); // Recupera o userId do localStorage
+    const token = localStorage.getItem("token"); // Recupera o token do localStorage
 
-// Evento para a barra de pesquisa
-if (searchForm) {
-    searchForm.addEventListener("submit", (event) => {
-        event.preventDefault();
-        const searchTerm = document.getElementById("search-input").value.trim();
-
-        if (!searchTerm) {
-            console.warn("Pesquisa vazia. Digite algo para pesquisar.");
-            return;
-        }
-
-        fetchByTitle(searchTerm);
-    });
-}
-
-
-// Função genérica para buscar dados da API
-async function fetchCatalog(url) {
-    const token = localStorage.getItem("token");
-
-    if (!token) {
-        console.error("Token não encontrado. Faça login.");
+    if (!userId || !token) {
+        alert("Usuário não autenticado. Faça login novamente.");
+        window.location.href = "./login.html"; // Redireciona para a página de login
         return;
     }
 
-    try {
+    // Função para enviar requisições autenticadas
+    async function sendAuthenticatedRequest(url, method, body = null) {
+        const headers = {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`, // Inclui o token no cabeçalho
+        };
+
         const response = await fetch(url, {
-            method: "GET",
-            headers: {
-                "Authorization": `Bearer ${token}`,
-                "Content-Type": "application/json"
-            }
+            method: method,
+            headers: headers,
+            body: body ? JSON.stringify(body) : null, // Envia o corpo da requisição, se houver
         });
 
         if (!response.ok) {
-            const errorMessage = await response.text();
-            throw new Error(`Erro ao buscar dados: ${response.status} - ${errorMessage}`);
+            const errorData = await response.json();
+            throw new Error(errorData.error || "Erro na requisição.");
         }
 
-        const data = await response.json();
-        generateCards(data);
-
-    } catch (error) {
-        console.error("Erro ao carregar os dados:", error);
+        return response.json();
     }
-}
 
+    // Formulário de alteração de senha
+    const passwordForm = document.getElementById("password-form");
+    passwordForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const newPassword = document.getElementById("new-password").value;
+        const confirmPassword = document.getElementById("confirm-password").value;
 
+        // Verifica se a nova senha e a confirmação coincidem
+        if (newPassword !== confirmPassword) {
+            alert("As senhas não coincidem.");
+            return;
+        }
 
+        // Se a nova senha e a confirmação coincidirem, prossegue com a alteração da senha
+        try {
+            const response = await sendAuthenticatedRequest(
+                `http://localhost:3000/users/${userId}`,
+                "PATCH",
+                { password: confirmPassword } // Corpo da requisição
+            );
 
-
-document.addEventListener('DOMContentLoaded', function() {
-    const token = localStorage.getItem('token');
-    const user = JSON.parse(localStorage.getItem('user'));
-
-    if (!token || !user) {
-        alert('Usuário não autenticado. Faça login novamente.');
-        window.location.href = 'login.html';
-        return;
+             // Verifica se a resposta do backend contém um novo token
+            if (response.token) {
+                localStorage.setItem("token", response.token); // Atualiza o token no localStorage
+                alert("Senha alterada com sucesso! Você foi reautenticado.");
+            } else {
+                alert("Senha alterada com sucesso!");
             }
 
-        // Captura o termo de pesquisa da URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const searchQuery = urlParams.get('search');
 
-    if (searchQuery) {
-        fetch(`http://localhost:3000/search?query=${encodeURIComponent(searchQuery)}`, {
-            headers: {
-                'Authorization': `Bearer ${token}`,
-            },
-        })
-        .then(response => response.json())
-        .then(data => {
-            const resultsContainer = document.getElementById('search-results');
-            resultsContainer.innerHTML = data.map(item => `
-                <div class="card mb-3">
-                    <div class="card-body">
-                        <h5 class="card-title">${item.title}</h5>
-                        <p class="card-text">${item.description}</p>
-                    </div>
-                </div>
-            `).join('');
-        })
-        .catch((error) => {
-            console.error('Error:', error);
-        });      
-    }
-
-            // Logout
-    document.getElementById('logout').addEventListener('click', function() {
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        window.location.href = 'login.html';
+            window.location.reload(); // Recarrega a página
+        } catch (error) {
+            console.error(error);
+            alert(error.message); // Exibe a mensagem de erro do backend
+        }
     });
 });
+
+     // Formulário de alteração de senha
+    // const passwordForm = document.getElementById("password-form");
+    // passwordForm.addEventListener("submit", async (e) => {
+    //     e.preventDefault();
+    //     //const currentPassword = document.getElementById("current-password").value;
+    //     const newPassword = document.getElementById("new-password").value;
+    //     const confirmPassword = document.getElementById("confirm-password").value;
+    //     console.log(newPassword);
+    //     // Verifica se a nova senha e a confirmação coincidem
+    //     if (newPassword !== confirmPassword) {
+    //         alert("As senhas não coincidem.");
+    //         return;
+    //     }
+
+    //     // Verifica a senha atual no backend
+    //     //const isCurrentPasswordValid = await verifyCurrentPassword(currentPassword);
+    //     // if (!currentPassword !== user.senha) {
+    //     //     alert("Senha atual incorreta.");
+    //     //     return;
+    //     // }
+
+        
+    //     // Se a senha atual estiver correta, prossegue com a alteração da senha
+    //     try {
+    //         await sendAuthenticatedRequest(
+    //             `http://localhost:3000/users/${userId}`,
+    //             "PATCH",
+    //             { senha: newPassword } // Corpo da requisição
+    //         );
+
+    //         alert("Senha alterada com sucesso!");
+    //         window.location.reload(); // Recarrega a página
+    //     } catch (error) {
+    //         console.error(error);
+    //         alert(error.message);
+    //     }
+    // });
+
+    // Botão de exclusão de conta
+    const deleteAccountButton = document.getElementById("delete-account");
+    deleteAccountButton.addEventListener("click", async () => {
+        const confirmDelete = confirm("Tem certeza que deseja deletar sua conta? Esta ação não pode ser desfeita.");
+
+        if (confirmDelete) {
+            try {
+                await sendAuthenticatedRequest(
+                    `http://localhost:3000/users/${userId}`,
+                    "DELETE"
+                );
+
+                alert("Conta deletada com sucesso!");
+                localStorage.clear(); // Limpa o localStorage
+                window.location.href = "./login.html"; // Redireciona para a página de login
+            } catch (error) {
+                console.error(error);
+                alert(error.message);
+            }
+        }
+    });
+
+    // Logout
+    const logoutButton = document.getElementById("logout");
+    logoutButton.addEventListener("click", () => {
+        localStorage.clear(); // Limpa o localStorage
+        window.location.href = "./login.html"; // Redireciona para a página de login
+    });
+
+    // Redirecionamento para a homepage
+    const homepageLink = document.getElementById("homepage");
+    homepageLink.addEventListener("click", () => {
+        window.location.href = "./homepage_user.html";
+    });
+
+
+
+
+
+
+
+     // Função para verificar a senha atual no backend
+    //  async function verifyCurrentPassword(currentPassword) {
+    //     try {
+    //         const response = await sendAuthenticatedRequest(
+    //             `http://localhost:3000/users/${userId}`, // Rota para verificar a senha atual
+    //             "POST",
+    //             { currentPassword } // Envia a senha atual para verificação
+    //         );
+
+    //         return response.isValid; // Assume que o backend retorna { isValid: true/false }
+    //     } catch (error) {
+    //         console.error(error);
+    //         alert("Erro ao verificar a senha atual.");
+    //         return false;
+    //     }
+    // }

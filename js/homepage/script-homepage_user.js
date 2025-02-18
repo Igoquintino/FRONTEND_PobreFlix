@@ -1,23 +1,3 @@
-// // Simulação de dados vindo do backend (substituir por fetch real)
-// const catalogData = [
-//     {
-//         title: "Filme 1",
-//         description: "Descrição do Filme 1",
-//         genre: "Ação",
-//         content_type: "filme",
-//         video_url: "https://exemplo.com/video1",
-//         image_url: "https://via.placeholder.com/150"
-//     },
-//     {
-//         title: "Série 1",
-//         description: "Descrição da Série 1",
-//         genre: "Drama",
-//         content_type: "serie",
-//         video_url: "https://exemplo.com/video2",
-//         image_url: "https://via.placeholder.com/150"
-//     }
-// ];
-
 // Função para buscar todos os conteúdos (padrão)
 async function fetchAllCatalog() {
     fetchCatalog("http://localhost:3000/catalog");

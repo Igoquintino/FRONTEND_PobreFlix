@@ -107,7 +107,8 @@ function generateCards(data) {
                     <span class="badge bg-secondary">${item.genre}</span>
                     <span class="badge bg-info">${item.content_type}</span>
                     <br><br>
-                    <a href="${item.video_url}" class="btn btn-primary" target="_blank">Assistir</a>
+                    
+                    <a href="filme.html?title=${encodeURIComponent(item.title)}" class="btn btn-primary">Assistir</a>
                 </div>
             </div>
         `;

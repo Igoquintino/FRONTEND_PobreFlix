@@ -1,3 +1,61 @@
+// ==================================================
+// Eventos
+// ==================================================
+
+document.addEventListener("DOMContentLoaded", () => {
+    // Carrega todos os conteúdos ao entrar na página
+    fetchAllCatalog();
+
+    // Eventos para os botões de filtro
+    const btnFilmes = document.getElementById("btn-filmes");
+    const btnSeries = document.getElementById("btn-series");
+    const btnTodos = document.getElementById("btn-todos");
+
+    if (btnFilmes) btnFilmes.addEventListener("click", () => fetchFilteredCatalog("filme"));
+    if (btnSeries) btnSeries.addEventListener("click", () => fetchFilteredCatalog("serie"));
+    if (btnTodos) btnTodos.addEventListener("click", () => fetchAllCatalog());
+
+    // Evento para a barra de pesquisa
+    const searchForm = document.getElementById("search-form");
+    if (searchForm) {
+        searchForm.addEventListener("submit", (event) => {
+            event.preventDefault();
+            const searchTerm = document.getElementById("search-input").value.trim();
+
+            if (!searchTerm) {
+                console.warn("Pesquisa vazia. Digite algo para pesquisar.");
+                return;
+            }
+
+            fetchByTitle(searchTerm);
+        });
+    }
+
+    // Redirecionamento para páginas
+    const homepage = document.getElementById("homepage");
+    const about = document.getElementById("about");
+    const settings = document.getElementById("settings");
+    const logoutBtn = document.getElementById("logout");
+
+    if (homepage) homepage.addEventListener("click", () => window.location.href = "homepage_user.html");
+    if (about) about.addEventListener("click", () => window.location.href = "about.html");
+    if (settings) settings.addEventListener("click", () => window.location.href = "config.html");
+    if (logoutBtn) logoutBtn.addEventListener("click", logout);
+
+    // Evento para abrir o histórico no dropdown
+    const verHistorico = document.getElementById("verHistorico");
+    if (verHistorico) {
+        verHistorico.addEventListener("click", (event) => {
+            event.preventDefault(); // Impede o link de recarregar a página
+            fetchHistory();
+        });
+    }
+});
+
+// ==================================================
+// Funções
+// ==================================================
+
 // Função para buscar todos os conteúdos (padrão)
 async function fetchAllCatalog() {
     fetchCatalog("http://localhost:3000/catalog");
@@ -38,9 +96,115 @@ async function fetchCatalog(url) {
 
         const data = await response.json();
         generateCards(data);
-
     } catch (error) {
         console.error("Erro ao carregar os dados:", error);
+    }
+}
+
+// Função para buscar histórico
+async function fetchHistory() {
+    const token = localStorage.getItem("token");
+    const historicoDropdown = document.getElementById("historicoDropdown");
+
+    if (!token) {
+        console.error("Token não encontrado. Faça login.");
+        return;
+    }
+
+    try {
+        // Decodifica o token JWT para extrair o userId
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        const userId = payload.userId;
+
+        if (!userId) {
+            throw new Error("userId não encontrado no token.");
+        }
+
+        // Envia o userId como parte da URL
+        const response = await fetch(`http://localhost:3000/history/${userId}`, {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json"
+            }
+        });
+
+        if (!response.ok) {
+            const errorMessage = await response.text();
+            throw new Error(`Erro ao buscar histórico: ${errorMessage}`);
+        }
+
+        const history = await response.json();
+        console.log("Histórico recebido do backend:", history);
+
+        historicoDropdown.innerHTML = ""; // Limpa o dropdown antes de preencher
+
+        if (!history || history.length === 0) {
+            historicoDropdown.innerHTML = "<li class='list-group-item text-center'>Nenhum histórico encontrado.</li>";
+            return;
+        }
+
+        // Para cada item do histórico, busca os dados do catálogo
+        for (const item of history) {
+            console.log("Buscando catálogo para catalog_id:", item.catalog_id);
+            const catalogData = await fetchCatalogById(item.catalog_id);
+
+            if (!catalogData) {
+                console.error(`Erro ao buscar catálogo para catalog_id ${item.catalog_id}`);
+                continue; // Pula para o próximo item se houver erro
+            }
+
+            // Cria o item do histórico com os dados do catálogo
+            const li = document.createElement("li");
+            li.classList.add("list-group-item", "small");
+
+            if (catalogData.title) {
+                li.innerHTML = `<a href="filme.html?title=${encodeURIComponent(catalogData.title)}">${catalogData.title}</a>`;
+            } else {
+                li.innerHTML = `<span class='text-muted'>Título não disponível</span>`;
+            }
+
+            historicoDropdown.appendChild(li);
+        }
+
+        // Alterna a visibilidade do histórico
+        historicoDropdown.style.display = historicoDropdown.style.display === "none" ? "block" : "none";
+    } catch (error) {
+        console.error("Erro ao carregar o histórico:", error);
+    }
+}
+
+// Função para buscar conteúdo por ID
+async function fetchCatalogById(id) {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+        console.error("Token não encontrado. Faça login.");
+        return null;
+    }
+
+    try {
+        const response = await fetch(`http://localhost:3000/catalog/id/${id}`, {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json"
+            }
+        });
+
+        if (!response.ok) {
+            const errorMessage = await response.text();
+            throw new Error(`Erro ao buscar catálogo: ${errorMessage}`);
+        }
+
+        const catalogData = await response.json();
+        console.log("Dados do catálogo recebidos:", catalogData);
+
+        // Retorna o primeiro item do array (se existir)
+        return catalogData.length > 0 ? catalogData[0] : null;
+    } catch (error) {
+        console.error("Erro ao buscar catálogo:", error);
+        return null;
     }
 }
 
@@ -67,13 +231,12 @@ async function logout() {
             throw new Error(`Erro ao fazer logout: ${response.statusText}`);
         }
 
-        // Removendo o token após o logout
+        // Remove o token após o logout
         localStorage.removeItem("token");
-
     } catch (error) {
         console.error("Erro no logout:", error);
     } finally {
-        // Redireciona para a página de login independentemente do resultado da requisição
+        // Redireciona para a página de login
         window.location.href = "../index.html";
     }
 }
@@ -81,7 +244,7 @@ async function logout() {
 // Função para criar os cards dinamicamente
 function generateCards(data) {
     const cardsContainer = document.querySelector(".cards");
-    
+
     if (!cardsContainer) {
         console.error("Elemento .cards não encontrado no DOM.");
         return;
@@ -107,8 +270,7 @@ function generateCards(data) {
                     <span class="badge bg-secondary">${item.genre}</span>
                     <span class="badge bg-info">${item.content_type}</span>
                     <br><br>
-                    
-                    <a href="filme.html?title=${encodeURIComponent(item.title)}" class="btn btn-primary">Assistir</a>
+                    <a href="filme.html?title=${encodeURIComponent(item.title)}" class="btn btn-primary assistir-btn">Assistir</a>
                 </div>
             </div>
         `;
@@ -116,44 +278,3 @@ function generateCards(data) {
         cardsContainer.appendChild(card);
     });
 }
-
-// Adiciona eventos aos botões
-document.addEventListener("DOMContentLoaded", () => {
-    fetchAllCatalog(); // Carrega tudo ao entrar na página
-
-    // Verifica se os botões existem antes de adicionar os eventos
-    const btnFilmes = document.getElementById("btn-filmes");
-    const btnSeries = document.getElementById("btn-series");
-    const btnTodos = document.getElementById("btn-todos");
-    const searchForm = document.getElementById("search-form");
-
-    if (btnFilmes) btnFilmes.addEventListener("click", () => fetchFilteredCatalog("filme"));
-    if (btnSeries) btnSeries.addEventListener("click", () => fetchFilteredCatalog("serie"));
-    if (btnTodos) btnTodos.addEventListener("click", () => fetchAllCatalog());
-
-    // Evento para a barra de pesquisa
-    if (searchForm) {
-        searchForm.addEventListener("submit", (event) => {
-            event.preventDefault();
-            const searchTerm = document.getElementById("search-input").value.trim();
-
-            if (!searchTerm) {
-                console.warn("Pesquisa vazia. Digite algo para pesquisar.");
-                return;
-            }
-
-            fetchByTitle(searchTerm);
-        });
-    }
-
-    // Redirecionamento para páginas
-    const homepage = document.getElementById("homepage");
-    const about = document.getElementById("about");
-    const settings = document.getElementById("settings");
-    const logoutBtn = document.getElementById("logout");
-
-    if (homepage) homepage.addEventListener("click", () => window.location.href = "homepage_user.html");
-    if (about) about.addEventListener("click", () => window.location.href = "about.html");
-    if (settings) settings.addEventListener("click", () => window.location.href = "config.html");
-    if (logoutBtn) logoutBtn.addEventListener("click",logout);
-});

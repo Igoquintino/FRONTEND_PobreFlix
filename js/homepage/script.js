@@ -241,6 +241,7 @@ async function logout() {
     }
 }
 
+
 // Função para criar os cards dinamicamente
 function generateCards(data) {
     const cardsContainer = document.querySelector(".cards");
@@ -275,6 +276,65 @@ function generateCards(data) {
             </div>
         `;
 
+        // Adiciona o evento de clique ao botão "Assistir"
+        const assistirBtn = card.querySelector(".assistir-btn");
+        assistirBtn.addEventListener("click", async (event) => {
+            event.preventDefault(); // Impede o redirecionamento padrão
+
+            try {
+                // Faz a requisição POST para a rota de consumo
+                await registerConsumption(item.id); // Passa o ID do filme/série
+
+                // Redireciona para a página do filme após o consumo ser registrado
+                window.location.href = `filme.html?title=${encodeURIComponent(item.title)}`;
+            } catch (error) {
+                console.error("Erro ao registrar consumo:", error);
+                alert("Erro ao registrar o consumo. Tente novamente."); // Feedback para o usuário
+            }
+        });
+
         cardsContainer.appendChild(card);
     });
+}   
+
+// Função para registrar o consumo (requisição POST)
+async function registerConsumption(catalogId) {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+        console.error("Token não encontrado. Faça login.");
+        return;
+    }
+
+    try {
+        // Decodifica o token JWT para extrair o userId
+        const payload = JSON.parse(atob(token.split('.')[1])); // Decodifica o payload do token
+        const userId = payload.userId; // Extrai o userId do token
+
+        if (!userId) {
+            throw new Error("userId não encontrado no token.");
+        }
+
+        const response = await fetch("http://localhost:3000/consumption/", {
+            method: "POST",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ 
+                catalogId: catalogId, // ID do catálogo
+                userId: userId // ID do usuário
+            })
+        });
+
+        if (!response.ok) {
+            const errorMessage = await response.text();
+            throw new Error(`Erro ao registrar consumo: ${errorMessage}`);
+        }
+
+        console.log("Consumo registrado com sucesso!");
+    } catch (error) {
+        console.error("Erro ao registrar consumo:", error);
+        throw error; // Propaga o erro para ser tratado no evento de clique
+    }
 }

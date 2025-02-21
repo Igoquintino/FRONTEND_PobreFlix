@@ -52,6 +52,39 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
+document.addEventListener("DOMContentLoaded", function () {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+        alert("Usuário não autenticado. Faça login novamente.");
+        window.location.href = "./login.html";
+        return;
+    }
+
+    // Função para decodificar o token JWT
+    function decodeToken(token) {
+        try {
+            const payload = JSON.parse(atob(token.split('.')[1]));
+            return payload;
+        } catch (error) {
+            console.error("Erro ao decodificar o token:", error);
+            return null;
+        }
+    }
+
+    // Verifica se o usuário é administrador
+    const payload = decodeToken(token);
+    if (payload && payload.user_type === "Administrator") {
+        // Mostra a opção de administração no dropdown
+        const adminOption = document.getElementById("admin-option");
+        if (adminOption) {
+            adminOption.style.display = "block";
+        }
+    }
+
+    // Outros eventos e funcionalidades da página...
+});
+
 // ==================================================
 // Funções
 // ==================================================
@@ -241,7 +274,6 @@ async function logout() {
     }
 }
 
-
 // Função para criar os cards dinamicamente
 function generateCards(data) {
     const cardsContainer = document.querySelector(".cards");
@@ -282,20 +314,77 @@ function generateCards(data) {
             event.preventDefault(); // Impede o redirecionamento padrão
 
             try {
-                // Faz a requisição POST para a rota de consumo
-                await registerConsumption(item.id); // Passa o ID do filme/série
+                // Registra o consumo do filme
+                await registerConsumption(item.id);
+
+                // Extrai o nome da API a partir do video_url
+                const source = extractSourceFromUrl(item.video_url);
+
+                if (!source) {
+                    throw new Error("Não foi possível identificar a API a partir do video_url.");
+                }
+
+                // Registra o uso da API externa
+                await registerApiUsage(source, item.id);
 
                 // Redireciona para a página do filme após o consumo ser registrado
                 window.location.href = `filme.html?title=${encodeURIComponent(item.title)}`;
             } catch (error) {
-                console.error("Erro ao registrar consumo:", error);
+                console.error("Erro ao registrar consumo ou uso da API:", error);
                 alert("Erro ao registrar o consumo. Tente novamente."); // Feedback para o usuário
             }
         });
 
         cardsContainer.appendChild(card);
     });
-}   
+}
+
+// Função para extrair o nome da API a partir do video_url
+function extractSourceFromUrl(videoUrl) {
+    try {
+        const url = new URL(videoUrl); // Cria um objeto URL a partir da string
+        const hostname = url.hostname; // Extrai o hostname (ex: "superflixapi.com")
+        const source = hostname.split('.')[0]; // Extrai o nome da API (ex: "superflixapi")
+        return source;
+    } catch (error) {
+        console.error("Erro ao extrair o nome da API:", error);
+        return null;
+    }
+}
+
+// Função para registrar o uso da API externa
+async function registerApiUsage(source, catalogId) {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+        console.error("Token não encontrado. Faça login.");
+        return;
+    }
+
+    try {
+        const response = await fetch("http://localhost:3000/api/external-api/register", {
+            method: "POST",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ 
+                source: source, // Nome da API
+                catalogId: catalogId // ID do catálogo
+            })
+        });
+
+        if (!response.ok) {
+            const errorMessage = await response.text();
+            throw new Error(`Erro ao registrar uso da API: ${errorMessage}`);
+        }
+
+        console.log("Uso da API registrado com sucesso!");
+    } catch (error) {
+        console.error("Erro ao registrar uso da API:", error);
+        throw error; // Propaga o erro para ser tratado no evento de clique
+    }
+}
 
 // Função para registrar o consumo (requisição POST)
 async function registerConsumption(catalogId) {

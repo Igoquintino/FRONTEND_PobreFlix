@@ -62,7 +62,7 @@ document.addEventListener("DOMContentLoaded", function () {
     function decodeToken(token) {
         try {
             const payload = JSON.parse(atob(token.split('.')[1]));
-            console.log(payload);
+            //console.log(payload);
             return payload;
         } catch (error) {
             console.error("Erro ao decodificar o token:", error);
@@ -72,7 +72,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Verifica se o usuário é administrador
     const payload = decodeToken(token);
-    console.log(payload.userType);
+    //console.log(payload.userType);
     if (payload && payload.userType === "Administrator") {
         // Mostra a opção de administração no dropdown
         const adminOption = document.getElementById("admin-option");

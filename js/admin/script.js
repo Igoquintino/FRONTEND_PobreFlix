@@ -22,18 +22,21 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
         if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.error || "Erro na requisição.");
+            const errorData = await response.json().catch(() => null); // Captura erros de JSON inválido
+            throw new Error(errorData?.error || "Erro na requisição.");
         }
 
-        return response.json();
+        try {
+            return await response.json();
+        } catch (error) {
+            return null; // Retorna null se a resposta não tiver corpo JSON
+        }
     }
 
     // ==================================================
     // Gerenciamento de Conteúdos
     // ==================================================
 
-    // Formulário para adicionar/editar conteúdo
     const contentForm = document.getElementById("content-form");
     const contentTableBody = document.getElementById("content-table-body");
 
@@ -44,7 +47,7 @@ document.addEventListener("DOMContentLoaded", function () {
             renderContents(contents);
         } catch (error) {
             console.error("Erro ao carregar conteúdos:", error);
-            alert(error.message);
+            alert("Erro ao carregar conteúdos. Verifique o console para mais detalhes.");
         }
     }
 
@@ -87,15 +90,47 @@ document.addEventListener("DOMContentLoaded", function () {
             document.getElementById("content-description").value = content.description;
             document.getElementById("content-genre").value = content.genre;
             document.getElementById("content-type").value = content.content_type;
-            document.getElementById("content-image-url").value = content.image_url;
             document.getElementById("content-video-url").value = content.video_url;
 
             // Altera o botão do formulário para "Atualizar"
             contentForm.querySelector("button").textContent = "Atualizar Conteúdo";
             contentForm.dataset.contentId = contentId; // Armazena o ID do conteúdo no formulário
+
+            // Busca o poster do filme com base no título
+            const posterUrl = await fetchPoster(content.title);
+            if (posterUrl) {
+                // Atualiza o campo de poster no formulário (se houver)
+                document.getElementById("content-poster-url").value = posterUrl;
+            }
+
         } catch (error) {
             console.error("Erro ao carregar conteúdo:", error);
-            alert(error.message);
+            alert("Erro ao carregar conteúdo. Verifique o console para mais detalhes.");
+        }
+    }
+
+    async function fetchPoster(title) {
+        try {
+            console.log(`Buscando poster para o filme: ${title}`);
+            const response = await fetch(`http://localhost:3000/api/external-api/movie-poster?title=${encodeURIComponent(title)}`);
+            
+            // Verifica se a resposta foi bem-sucedida
+            if (!response.ok) {
+                throw new Error(`Erro na requisição: ${response.status} ${response.statusText}`);
+            }
+    
+            // Tenta parsear a resposta como JSON
+            const data = await response.json();
+    
+            // Verifica se a resposta contém o campo poster_url
+            if (!data.poster_url) {
+                throw new Error("URL do poster não encontrada na resposta.");
+            }
+    
+            return data.poster_url; // Retorna a URL do poster
+        } catch (error) {
+            console.error("Erro ao buscar poster:", error);
+            return null; // Retorna null em caso de erro
         }
     }
 
@@ -110,7 +145,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 loadContents(); // Recarrega a lista de conteúdos
             } catch (error) {
                 console.error("Erro ao excluir conteúdo:", error);
-                alert(error.message);
+                alert("Erro ao excluir conteúdo. Verifique o console para mais detalhes.");
             }
         }
     }
@@ -128,8 +163,8 @@ document.addEventListener("DOMContentLoaded", function () {
             description: document.getElementById("content-description").value,
             genre: document.getElementById("content-genre").value,
             content_type: document.getElementById("content-type").value,
-            image_url: document.getElementById("content-image-url").value,
             video_url: document.getElementById("content-video-url").value,
+            poster_url: document.getElementById("content-poster-url").value, // Inclui o poster_url
         };
 
         try {
@@ -140,9 +175,30 @@ document.addEventListener("DOMContentLoaded", function () {
             loadContents(); // Recarrega a lista de conteúdos
         } catch (error) {
             console.error("Erro ao salvar conteúdo:", error);
-            alert(error.message);
+            alert("Erro ao salvar conteúdo. Verifique o console para mais detalhes.");
         }
     });
+
+    const posterPreview = document.getElementById("poster-preview");
+
+        document.getElementById("content-title").addEventListener("input", async (e) => {
+            const title = e.target.value.trim();
+            if (title) {
+                try {
+                    const posterUrl = await fetchPoster(title);
+                    if (posterUrl) {
+                        document.getElementById("content-poster-url").value = posterUrl;
+                        posterPreview.src = posterUrl;
+                        posterPreview.style.display = "block"; // Exibe a imagem
+                    } else {
+                        posterPreview.style.display = "none"; // Oculta a imagem se não houver poster
+                    }
+                } catch (error) {
+                    console.error("Erro ao buscar poster:", error);
+                    posterPreview.style.display = "none"; // Oculta a imagem em caso de erro
+                }
+            }
+        });
 
     // ==================================================
     // Gerenciamento de Usuários
@@ -158,7 +214,7 @@ document.addEventListener("DOMContentLoaded", function () {
             renderUsers(users);
         } catch (error) {
             console.error("Erro ao carregar usuários:", error);
-            alert(error.message);
+            alert("Erro ao carregar usuários. Verifique o console para mais detalhes.");
         }
     }
 
@@ -184,12 +240,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const searchTerm = document.getElementById("user-search").value;
 
+        if (!searchTerm) {
+            alert("Digite um termo de busca (ID, nome ou e-mail).");
+            return;
+        }
+
         try {
-            const users = await sendAuthenticatedRequest(`http://localhost:3000/users/search?query=${searchTerm}`, "GET");
+            // Envia o termo de busca como parâmetro de consulta
+            const users = await sendAuthenticatedRequest(
+                `http://localhost:3000/users/search?name=${encodeURIComponent(searchTerm)}`,
+                "GET"
+            );
             renderUsers(users);
         } catch (error) {
             console.error("Erro ao buscar usuários:", error);
-            alert(error.message);
+            alert("Erro ao buscar usuários. Verifique o console para mais detalhes.");
         }
     });
 

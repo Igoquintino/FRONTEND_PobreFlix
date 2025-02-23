@@ -1,6 +1,11 @@
-# PobreFlix - Frontend 🎮
 
-Bem-vindo ao repositório do frontend do **PobreFlix**, um site de streaming desenvolvido com **HTML, CSS, JavaScript e Bootstrap 5**.
+---
+
+# 🎮 PobreFlix - Frontend  
+
+Bem-vindo ao repositório do frontend do **PobreFlix**, um site de streaming desenvolvido com **HTML, CSS, JavaScript e Bootstrap 5**.  
+
+🔗 **Backend do PobreFlix:** [Acesse o repositório aqui](<https://github.com/Igoquintino/API_REST_POBREFLIX.git>)  
 
 ---
 

@@ -181,24 +181,24 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const posterPreview = document.getElementById("poster-preview");
 
-        document.getElementById("content-title").addEventListener("input", async (e) => {
-            const title = e.target.value.trim();
-            if (title) {
-                try {
-                    const posterUrl = await fetchPoster(title);
-                    if (posterUrl) {
-                        document.getElementById("content-poster-url").value = posterUrl;
-                        posterPreview.src = posterUrl;
-                        posterPreview.style.display = "block"; // Exibe a imagem
-                    } else {
-                        posterPreview.style.display = "none"; // Oculta a imagem se não houver poster
-                    }
-                } catch (error) {
-                    console.error("Erro ao buscar poster:", error);
-                    posterPreview.style.display = "none"; // Oculta a imagem em caso de erro
+    document.getElementById("content-title").addEventListener("input", async (e) => {
+        const title = e.target.value.trim();
+        if (title) {
+            try {
+                const posterUrl = await fetchPoster(title);
+                if (posterUrl) {
+                    document.getElementById("content-poster-url").value = posterUrl;
+                    posterPreview.src = posterUrl;
+                    posterPreview.style.display = "block"; // Exibe a imagem
+                } else {
+                    posterPreview.style.display = "none"; // Oculta a imagem se não houver poster
                 }
+            } catch (error) {
+                console.error("Erro ao buscar poster:", error);
+                posterPreview.style.display = "none"; // Oculta a imagem em caso de erro
             }
-        });
+        }
+    });
 
     // ==================================================
     // Gerenciamento de Usuários
@@ -229,9 +229,33 @@ document.addEventListener("DOMContentLoaded", function () {
                 <td>${user.name}</td>
                 <td>${user.email}</td>
                 <td>${user.user_type}</td>
+                <td>
+                    <button class="btn btn-danger btn-sm delete-user" data-id="${user.id}">Excluir</button>
+                </td>
             `;
             userTableBody.appendChild(row);
         });
+
+        // Adiciona eventos aos botões de exclusão de usuários
+        document.querySelectorAll(".delete-user").forEach(button => {
+            button.addEventListener("click", () => deleteUser(button.dataset.id));
+        });
+    }
+
+    // Função para excluir usuário
+    async function deleteUser(userId) {
+        const confirmDelete = confirm("Tem certeza que deseja excluir este usuário?");
+
+        if (confirmDelete) {
+            try {
+                await sendAuthenticatedRequest(`http://localhost:3000/users/${userId}`, "DELETE");
+                alert("Usuário excluído com sucesso!");
+                loadUsers(); // Recarrega a lista de usuários
+            } catch (error) {
+                console.error("Erro ao excluir usuário:", error);
+                alert("Erro ao excluir usuário. Verifique o console para mais detalhes.");
+            }
+        }
     }
 
     // Evento de envio do formulário de busca de usuários

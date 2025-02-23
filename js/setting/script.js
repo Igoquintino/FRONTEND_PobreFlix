@@ -1,12 +1,36 @@
 
 document.addEventListener("DOMContentLoaded", function () {
     const userId = localStorage.getItem("userId"); // Recupera o userId do localStorage
+    console.log('user: ',userId);
     const token = localStorage.getItem("token"); // Recupera o token do localStorage
 
     if (!userId || !token) {
         alert("Usuário não autenticado. Faça login novamente.");
         window.location.href = "./login.html"; // Redireciona para a página de login
         return;
+    }
+
+    // Função para decodificar o token JWT
+    function decodeToken(token) {
+        try {
+            const payload = JSON.parse(atob(token.split('.')[1]));
+            //console.log(payload);
+            return payload;
+        } catch (error) {
+            console.error("Erro ao decodificar o token:", error);
+            return null;
+        }
+    }
+
+    // Verifica se o usuário é administrador
+    const payload = decodeToken(token);
+    console.log(payload.userType);
+    if (payload && payload.userType === "Administrator") {
+        // Mostra a opção de administração no dropdown
+        const adminOption = document.getElementById("admin-option");
+        if (adminOption) {
+            adminOption.style.display = "block";
+        }
     }
 
     // Função para enviar requisições autenticadas
@@ -28,6 +52,41 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         return response.json();
+    }
+
+    // Formulário de alteração do nome de usuário
+    const usernameForm = document.getElementById("username-form");
+    if (usernameForm) {
+        usernameForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const newUsername = document.getElementById("new-username").value.trim();
+            if (!newUsername) {
+                alert("Por favor, digite um novo nome de usuário.");
+                return;
+            }
+
+            try {
+                const response = await sendAuthenticatedRequest(
+                    `http://localhost:3000/users/${userId}`,
+                    "PATCH",
+                    { name: newUsername } // Corpo da requisição
+                );
+
+                // Verifica se a resposta do backend contém um novo token
+                if (response.token) {
+                    localStorage.setItem("token", response.token); // Atualiza o token no localStorage
+                    alert("Nome de usuário atualizado com sucesso! Você foi reautenticado.");
+                } else {
+                    alert("Nome de usuário atualizado com sucesso!");
+                }
+
+                window.location.reload(); // Recarrega a página
+            } catch (error) {
+                console.error(error);
+                alert("Erro ao atualizar o nome de usuário: " + error.message);
+            }
+        });
     }
 
     // Formulário de alteração de senha
@@ -68,44 +127,6 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
-     // Formulário de alteração de senha
-    // const passwordForm = document.getElementById("password-form");
-    // passwordForm.addEventListener("submit", async (e) => {
-    //     e.preventDefault();
-    //     //const currentPassword = document.getElementById("current-password").value;
-    //     const newPassword = document.getElementById("new-password").value;
-    //     const confirmPassword = document.getElementById("confirm-password").value;
-    //     console.log(newPassword);
-    //     // Verifica se a nova senha e a confirmação coincidem
-    //     if (newPassword !== confirmPassword) {
-    //         alert("As senhas não coincidem.");
-    //         return;
-    //     }
-
-    //     // Verifica a senha atual no backend
-    //     //const isCurrentPasswordValid = await verifyCurrentPassword(currentPassword);
-    //     // if (!currentPassword !== user.senha) {
-    //     //     alert("Senha atual incorreta.");
-    //     //     return;
-    //     // }
-
-        
-    //     // Se a senha atual estiver correta, prossegue com a alteração da senha
-    //     try {
-    //         await sendAuthenticatedRequest(
-    //             `http://localhost:3000/users/${userId}`,
-    //             "PATCH",
-    //             { senha: newPassword } // Corpo da requisição
-    //         );
-
-    //         alert("Senha alterada com sucesso!");
-    //         window.location.reload(); // Recarrega a página
-    //     } catch (error) {
-    //         console.error(error);
-    //         alert(error.message);
-    //     }
-    // });
-
     // Botão de exclusão de conta
     const deleteAccountButton = document.getElementById("delete-account");
     deleteAccountButton.addEventListener("click", async () => {
@@ -141,25 +162,3 @@ document.addEventListener("DOMContentLoaded", function () {
         window.location.href = "./homepage_user.html";
     });
 
-
-
-
-
-
-
-     // Função para verificar a senha atual no backend
-    //  async function verifyCurrentPassword(currentPassword) {
-    //     try {
-    //         const response = await sendAuthenticatedRequest(
-    //             `http://localhost:3000/users/${userId}`, // Rota para verificar a senha atual
-    //             "POST",
-    //             { currentPassword } // Envia a senha atual para verificação
-    //         );
-
-    //         return response.isValid; // Assume que o backend retorna { isValid: true/false }
-    //     } catch (error) {
-    //         console.error(error);
-    //         alert("Erro ao verificar a senha atual.");
-    //         return false;
-    //     }
-    // }

@@ -19,20 +19,21 @@
           <li><a href="#" id="homepage" class="nav-link px-2 link-secondary">Homepage</a></li>
           <li><a href="#" id="about" class="nav-link px-2 link-body-emphasis">Sobre nós</a></li>
         </ul>
-
-        <form id="search-form" class="d-flex me-3" role="search">
-          <input id="search-input" type="search" class="form-control" placeholder="Search..." aria-label="Search">
-          <button class="btn btn-outline-success" type="submit">Search</button>
-        </form>
-
         <div class="dropdown text-end">
           <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
             <img src="https://github.com/mdo.png" alt="mdo" width="32" height="32" class="rounded-circle">
           </a>
           <ul class="dropdown-menu text-small">
-            <li><a id="settings" class="dropdown-item" href="#">Settings</a></li>
+            <li><a id="settings" class="dropdown-item" href="#">Configurações</a></li>
+            
+            <!-- Opção de Administração (visível apenas para administradores) -->
+            <li id="admin-option" style="display: none;">
+              <a class="dropdown-item" href="admin.html">Painel do Administrador</a>
+              <a class="dropdown-item" href="admin_painel.html">Painel de Acesso Restrito</a>
+            </li>
+            
             <li><hr class="dropdown-divider"></li>
-            <li><a id="logout" class="dropdown-item" href="#">Sign out</a></li>
+            <li><a id="logout" class="dropdown-item" href="#">Sair</a></li>
           </ul>
         </div>
       </div>
@@ -59,10 +60,6 @@
         <div class="card p-3 mb-3">
             <h4>Alterar Senha</h4>
             <form id="password-form">
-                <!-- <div class="mb-3">
-                    <label for="current-password" class="form-label">Senha Atual</label>
-                    <input type="password" class="form-control" id="current-password" required>
-                </div> -->
                 <div class="mb-3">
                     <label for="new-password" class="form-label">Nova Senha</label>
                     <input type="password" class="form-control" id="new-password" required>
@@ -76,7 +73,7 @@
         </div>
 
         <!-- Deletar Conta -->
-        <div class="card p-3">
+        <div class="card p-3" id="admin-option" style="display: none;">
             <h4>Deletar Conta</h4>
             <p>Cuidado! Esta ação não pode ser desfeita.</p>
             <button class="btn btn-danger" id="delete-account">Remover Conta</button>

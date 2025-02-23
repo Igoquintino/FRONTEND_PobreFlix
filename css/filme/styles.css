@@ -1,0 +1,29 @@
+body {
+    background-color: #000; /* Fundo preto */
+    color: #fff; /* Texto branco */
+}
+.navbar {
+    background-color: #761717; /* Vermelho */
+}
+.navbar-brand {
+    color: #fff !important; /* Texto branco */
+    font-weight: bold;
+}
+.footer {
+    background-color: #761717; /* Vermelho */
+    color: #fff; /* Texto branco */
+    padding: 10px 0;
+    text-align: center;
+}
+.filme-container {
+    background-color: #1a1a1a; /* Cinza escuro */
+    padding: 20px;
+    border-radius: 10px;
+    margin-top: 20px;
+}
+.filme-container h2 {
+    color: #ffffff; /* Vermelho */
+}
+.filme-container p {
+    color: #fff; /* Texto branco */
+}

@@ -1,15 +1,113 @@
+/* Importa a fonte do Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
+
+:root {
+    --cor-primaria: #ff5757;
+    --cor-texto: #333;
+    --cor-fundo: #ffffff;
+}
+
 body {
-    background-color: #121212;
-    color: #ffffff;
+    font-family: 'Roboto', sans-serif;
+    background-color: var(--cor-fundo);
+    color: var(--cor-texto);
 }
 
-.card {
-    background-color: #1e1e1e;
-    color: white;
-    border: 1px solid #333;
+/* HEADER */
+header {
+    background-color: #222;
+    padding: 15px 0;
 }
 
-.card a {
-    background-color: #e50914;
+.nav-link {
+    color: #fff !important;
+}
+
+.nav-link:hover {
+    color: var(--cor-primaria) !important;
+}
+
+#btn-login {
+    border-color: var(--cor-primaria);
+    color: var(--cor-fundo);
+}
+
+#btn-login:hover {
+    background-color: var(--cor-primaria);
+    color: #fff;
+}
+
+/* FORMULÁRIOS */
+.form-control, .form-select {
+    background-color: var(--cor-fundo);
+    color: var(--cor-texto);
+    border: 1px solid var(--cor-primaria);
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--cor-primaria);
+    box-shadow: 0 0 5px rgba(255, 87, 87, 0.5);
+}
+
+/* CONTEÚDO PRINCIPAL */
+.container-xl {
+    text-align: center;
+    margin-top: 50px;
+}
+
+/* FOOTER */
+footer {
+    background-color: #222;
+    color: #fff;
+    text-align: center;
+    padding: 20px 0;
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+}
+
+
+/* Fundo da página */
+body {
+    background-color: #000;
+    color: #fff;
+    font-family: 'Arial', sans-serif;
+    text-align: center;
+}
+
+/* Estilo Neon para títulos */
+h1 {
+    font-size: 3rem;
+    color: #ff5757;
+    text-shadow: 0 0 10px #ff5757, 0 0 20px #ff5757, 0 0 30px #ff00006d;
+}
+
+p.lead {
+    font-size: 1.5rem;
+    color: #00ffff;
+    text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px #0088ff;
+}
+
+/* Botão neon */
+.btn-danger {
+    font-size: 1.2rem;
+    background-color: #b62c2c;
     border: none;
+    box-shadow: 0 0 10px #dda8a8, 0 0 20px #e5a2a2, 0 0 30px #ff6666;
+    transition: 0.3s;
+}
+
+.btn-danger:hover {
+    box-shadow: 0 0 15px #ff0000, 0 0 25px #ff3333, 0 0 35px #ff6666;
+    transform: scale(1.05);
+}
+
+/* Header e Footer */
+header, footer {
+    background-color: #111;
+}
+
+footer p {
+    font-size: 1rem;
+    color: #ddd;
 }

@@ -55,6 +55,29 @@ document.addEventListener("DOMContentLoaded", function () {
         `;
     });
 
+    // Função para decodificar o token JWT
+    function decodeToken(token) {
+        try {
+            const payload = JSON.parse(atob(token.split('.')[1]));
+            //console.log(payload);
+            return payload;
+        } catch (error) {
+            console.error("Erro ao decodificar o token:", error);
+            return null;
+        }
+    }
+
+    // Verifica se o usuário é administrador
+    const payload = decodeToken(token);
+    //console.log(payload.userType);
+    if (payload && payload.userType === "Administrator") {
+        // Mostra a opção de administração no dropdown
+        const adminOption = document.getElementById("admin-option");
+        if (adminOption) {
+            adminOption.style.display = "block";
+        }
+    }
+
     // Logout
     const logoutButton = document.getElementById("logout");
     if (logoutButton) {

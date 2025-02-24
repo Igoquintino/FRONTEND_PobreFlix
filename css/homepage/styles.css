@@ -1,0 +1,107 @@
+/* Estilo global */
+body {
+    background-color: #000; /* Fundo preto */
+    color: #fff; /* Texto branco */
+    font-family: 'Times New Roman', Times, serif, sans-serif;
+}
+
+/* Navbar */
+.navbar-color {
+    background-color: #761717; /* Vermelho */
+    padding: 10px 0;
+}
+.navbar-brand img {
+    max-height: 50px;
+}
+.navbar-brand,
+.navbar .nav-link {
+    color: #fff !important;
+}
+.navbar .nav-link:hover {
+    color: #ff5757 !important; /* Vermelho mais claro */
+}
+
+/* Estilizando a barra de busca */
+#search-form input {
+    background-color: #1a1a1a;
+    border: 1px solid #ff5757;
+    color: #fff;
+}
+#search-form input::placeholder {
+    color: #aaa;
+}
+#search-form button {
+    background-color: #ff5757;
+    border-color: #ff5757;
+    color: #fff;
+}
+#search-form button:hover {
+    background-color: #d63b3b;
+}
+
+/* Dropdown Minha Conta */
+.dropdown-menu {
+    background-color: #1a1a1a;
+    border: 1px solid #761717;
+}
+.dropdown-menu .dropdown-item {
+    color: #fff;
+}
+.dropdown-menu .dropdown-item:hover {
+    background-color: #761717;
+}
+
+/* Container dos filmes */
+.container-xl h1 {
+    text-align: center;
+    color: #ff5757;
+    margin-top: 20px;
+}
+
+/* Estilização dos cards de filmes */
+.cards {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+}
+
+.card {
+    background-color: #1a1a1a; /* Cinza escuro */
+    border: 1px solid #761717;
+    border-radius: 10px;
+    overflow: hidden;
+    max-width: 250px;
+}
+.card img {
+    width: 100%;
+    height: auto;
+}
+.card-body {
+    padding: 15px;
+}
+.card-title {
+    color: #ff5757;
+    font-size: 18px;
+}
+.card-text {
+    color: #ccc;
+    font-size: 14px;
+}
+.card .btn {
+    background-color: #ff5757;
+    border: none;
+    color: white;
+}
+.card .btn:hover {
+    background-color: #d63b3b;
+}
+
+/* Rodapé */
+.footer {
+    background-color: #761717;
+    color: #fff;
+    padding: 10px 0;
+    text-align: center;
+    margin-top: 30px;
+}

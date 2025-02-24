@@ -10,11 +10,13 @@
     <link rel="stylesheet" href="../css/filme/styles.css">
 </head>
 <body>
-
+    
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark">
+    <nav class="navbar navbar-expand-lg navbar-dark p-3 mb-3 border-bottom">
         <div class="container-fluid">
-            <a class="navbar-brand" href="./homepage_user.html">PobreFlix</a>
+            <a class="navbar-brand" href="./homepage_user.html">
+                <img src="../image/logo branca.png" alt="PobreFlix" width="120" height="auto" class="d-inline-block align-top">
+            </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -28,11 +30,12 @@
                             Minha Conta
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href="./settings.html">Configurações</a></li>
-                            <!-- <li><a class="dropdown-item" href="./historico.html">Meu Histórico</a></li> -->
-                            <li><a class="dropdown-item" href="./admin.html">Painel de Administração</a></li>
-                            <li><a class="dropdown-item" href="./admin_painel.html">Painel de Acesso Restrito</a></li>
-                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="./config.html">Configurações</a></li>
+                            <li id="admin-option" style="display: none;">
+                                <a class="dropdown-item" href="./admin.html">Painel de Administração</a>
+                                <a class="dropdown-item" href="./admin_painel.html">Painel de Acesso Restrito</a>
+                            </li>
+                            <hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="#" id="logout">Sair</a></li>
                         </ul>
                     </li>

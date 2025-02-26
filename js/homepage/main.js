@@ -15,7 +15,11 @@ document.addEventListener("DOMContentLoaded", () => {
     if (btnSeries) btnSeries.addEventListener("click", () => fetchFilteredCatalog("serie"));
     if (btnTodos) btnTodos.addEventListener("click", () => fetchAllCatalog());
 
+    
     const searchForm = document.getElementById("search-form");
+    function removeAccents(str) {
+        return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    }
     if (searchForm) {
         searchForm.addEventListener("submit", (event) => {
             event.preventDefault();
@@ -25,8 +29,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 console.warn("Pesquisa vazia. Digite algo para pesquisar.");
                 return;
             }
-
+  
             fetchByTitle(searchTerm);
+            console.log(searchTerm);
         });
     }
 

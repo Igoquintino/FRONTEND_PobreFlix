@@ -10,6 +10,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     const token = localStorage.getItem("token"); // Obtém o token do localStorage
+    const apikey = localStorage.getItem("pobreflix_api_key");
+
 
     if (!token) {
         dadosFilme.innerHTML = `<p class="text-danger">Usuário não autenticado. <a href="./login.html">Faça login</a> para acessar este conteúdo.</p>`;
@@ -20,6 +22,7 @@ document.addEventListener("DOMContentLoaded", function () {
         method: "GET",
         headers: {
             "Authorization": `Bearer ${token}`, // Adiciona o token JWT
+            "x-api-key": apikey,
             "Content-Type": "application/json"
         }
     })

@@ -1,6 +1,7 @@
 // api.js
 export async function fetchCatalog(url) {
     const token = localStorage.getItem("token");
+    const apikey = localStorage.getItem("pobreflix_api_key");
 
     if (!token) {
         console.error("Token não encontrado. Faça login.");
@@ -12,6 +13,7 @@ export async function fetchCatalog(url) {
             method: "GET",
             headers: {
                 "Authorization": `Bearer ${token}`,
+                "x-api-key": apikey,
                 "Content-Type": "application/json"
             }
         });
@@ -31,6 +33,7 @@ export async function fetchCatalog(url) {
 
 export async function fetchCatalogById(id) {
     const token = localStorage.getItem("token");
+    const apikey = localStorage.getItem("pobreflix_api_key");
 
     if (!token) {
         console.error("Token não encontrado. Faça login.");
@@ -42,6 +45,7 @@ export async function fetchCatalogById(id) {
             method: "GET",
             headers: {
                 "Authorization": `Bearer ${token}`,
+                "x-api-key": apikey,
                 "Content-Type": "application/json"
             }
         });

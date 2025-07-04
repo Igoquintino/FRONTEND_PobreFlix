@@ -3,8 +3,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const API_BASE_URL = "http://localhost:3000";
 
     // Recupera todas as credenciais do localStorage no carregamento da página.
-    // Essas variáveis manterão seus valores para as funções definidas neste escopo,
-    // mesmo que o localStorage seja limpo depois.
     const userId = localStorage.getItem("userId");
     const token = localStorage.getItem("token");
     const apiKey = localStorage.getItem("api_key");
@@ -42,7 +40,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 alert("Sua sessão expirou ou foi encerrada. Por favor, faça login novamente.");
                 localStorage.clear(); // Limpa todas as credenciais armazenadas
                 window.location.href = "./login.html"; // Redireciona para a tela de login
-                // Interrompe a execução posterior
                 throw new Error("Redirecionando para login devido a erro de autenticação.");
             }
 
@@ -230,13 +227,19 @@ document.addEventListener("DOMContentLoaded", function () {
         resultElement.appendChild(historyList);
     }
 
-    // --- Nova Função: Carregar Log de Atividades ---
+    // --- Lógica de Paginação para Log de Atividades ---
+    const rowsPerPage = 5; // Número de linhas por página
+    let currentLogActivitiesPage = 1;
+    let allLogActivitiesData = []; // Armazena todos os logs de atividade
+
+    // Função para carregar o Log de Atividades (AGORA COM PAGINAÇÃO)
     async function loadLogActivities() {
         try {
-            // Assumindo que seu backend tem um endpoint para buscar todos os logs
             const logs = await sendAuthenticatedRequest(`${API_BASE_URL}/logAccess/All/logs`, "GET");
             console.log("Resposta da API (logActivities):", logs);
-            renderLogActivities(logs);
+            allLogActivitiesData = logs; // Salva todos os logs
+            renderLogActivitiesTable(); // Renderiza a tabela com a página atual
+            setupPagination(allLogActivitiesData, document.getElementById('paginationControls')); // Configura os controles de paginação
         } catch (error) {
             console.error("Erro ao carregar log de atividades:", error);
             document.getElementById("logActivitiesTableBody").innerHTML = `
@@ -247,21 +250,25 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    // --- Nova Função: Renderizar Log de Atividades na Tabela ---
-    function renderLogActivities(logs) {
+    // Função para renderizar o Log de Atividades na Tabela com Paginação
+    function renderLogActivitiesTable() {
         const tableBody = document.getElementById("logActivitiesTableBody");
-        tableBody.innerHTML = "";
+        tableBody.innerHTML = ''; // Limpa o corpo da tabela
 
-        if (!logs || !Array.isArray(logs) || logs.length === 0) {
+        const start = (currentLogActivitiesPage - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
+        const paginatedItems = allLogActivitiesData.slice(start, end);
+
+        if (!paginatedItems || paginatedItems.length === 0) {
             tableBody.innerHTML = `
                 <tr>
-                    <td colspan="8" class="text-center">Nenhum registro de atividade encontrado.</td>
+                    <td colspan="8" class="text-center">Nenhum registro de atividade encontrado para esta página.</td>
                 </tr>
             `;
             return;
         }
 
-        logs.forEach(log => {
+        paginatedItems.forEach(log => {
             const row = document.createElement("tr");
             row.innerHTML = `
                 <td>${log.id || "N/A"}</td>
@@ -277,14 +284,121 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    // Função para configurar os botões de paginação
+    function setupPagination(items, wrapper) {
+        wrapper.innerHTML = ''; // Limpa os controles de paginação existentes
+
+        const pageCount = Math.ceil(items.length / rowsPerPage);
+
+        // Botão "Anterior"
+        const prevItem = document.createElement('li');
+        prevItem.classList.add('page-item');
+        if (currentLogActivitiesPage === 1) prevItem.classList.add('disabled');
+        const prevLink = document.createElement('a');
+        prevLink.classList.add('page-link');
+        prevLink.href = '#';
+        prevLink.textContent = 'Anterior';
+        prevLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (currentLogActivitiesPage > 1) {
+                currentLogActivitiesPage--;
+                renderLogActivitiesTable();
+                updatePaginationButtons(wrapper, pageCount);
+            }
+        });
+        prevItem.appendChild(prevLink);
+        wrapper.appendChild(prevItem);
+
+        // Botões numerados de página
+        for (let i = 1; i <= pageCount; i++) {
+            const btn = createPaginationButton(i);
+            wrapper.appendChild(btn);
+        }
+
+        // Botão "Próximo"
+        const nextItem = document.createElement('li');
+        nextItem.classList.add('page-item');
+        if (currentLogActivitiesPage === pageCount) nextItem.classList.add('disabled');
+        const nextLink = document.createElement('a');
+        nextLink.classList.add('page-link');
+        nextLink.href = '#';
+        nextLink.textContent = 'Próximo';
+        nextLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (currentLogActivitiesPage < pageCount) {
+                currentLogActivitiesPage++;
+                renderLogActivitiesTable();
+                updatePaginationButtons(wrapper, pageCount);
+            }
+        });
+        nextItem.appendChild(nextLink);
+        wrapper.appendChild(nextItem);
+
+        updatePaginationButtons(wrapper, pageCount); // Garante que o estado inicial esteja correto
+    }
+
+    // Função auxiliar para criar um botão de paginação
+    function createPaginationButton(pageNumber) {
+        const buttonItem = document.createElement('li');
+        buttonItem.classList.add('page-item');
+        if (currentLogActivitiesPage === pageNumber) buttonItem.classList.add('active'); // Destaca a página atual
+
+        const buttonLink = document.createElement('a');
+        buttonLink.classList.add('page-link');
+        buttonLink.href = '#';
+        buttonLink.textContent = pageNumber;
+
+        buttonLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            currentLogActivitiesPage = pageNumber;
+            renderLogActivitiesTable();
+            updatePaginationButtons(document.getElementById('paginationControls'), Math.ceil(allLogActivitiesData.length / rowsPerPage));
+        });
+
+        buttonItem.appendChild(buttonLink);
+        return buttonItem;
+    }
+
+    // Função para atualizar o estado dos botões de paginação (ativo/desativado)
+    function updatePaginationButtons(wrapper, pageCount) {
+        const pageItems = wrapper.querySelectorAll('.page-item');
+        pageItems.forEach(item => item.classList.remove('active', 'disabled'));
+
+        // Ativa o botão da página atual
+        const currentActiveButton = wrapper.querySelector(`.page-item:nth-child(${currentLogActivitiesPage + 1})`);
+        if (currentActiveButton) {
+            currentActiveButton.classList.add('active');
+        }
+
+        // Desativa/ativa os botões "Anterior" e "Próximo"
+        const prevButton = wrapper.querySelector('.page-item:first-child');
+        if (prevButton) {
+            if (currentLogActivitiesPage === 1) {
+                prevButton.classList.add('disabled');
+            } else {
+                prevButton.classList.remove('disabled');
+            }
+        }
+
+        const nextButton = wrapper.querySelector('.page-item:last-child');
+        if (nextButton) {
+            if (currentLogActivitiesPage === pageCount) {
+                nextButton.classList.add('disabled');
+            } else {
+                nextButton.classList.remove('disabled');
+            }
+        }
+    }
+
+
     // ==================================================
-    // Inicialização
+    // Inicialização e Event Listeners
     // ==================================================
 
-    // Carrega o histórico de acesso, o uso da API e o log de atividades ao carregar a página
+    // Carrega os dados quando a página carregar
     loadLogAccess();
     loadApiUsage();
-    loadLogActivities(); // Nova: Chama a função para carregar os logs
+    loadLogActivities(); // Chama a função para carregar os logs de atividade com paginação
 
     // Evento de envio do formulário de busca de histórico de acesso por ID
     const logAccessByIdForm = document.getElementById("logAccessByIdForm");
@@ -317,22 +431,15 @@ document.addEventListener("DOMContentLoaded", function () {
     // Logout
     const logoutButton = document.getElementById("logout");
     if (logoutButton) {
-        logoutButton.addEventListener("click", async () => { // Adicionado 'async'
-            // PASSO 1: Limpa o localStorage IMEDIATAMENTE.
+        logoutButton.addEventListener("click", async () => {
             localStorage.clear();
             console.log("LocalStorage limpo localmente.");
-
             try {
-                // PASSO 2: Tenta enviar a requisição de logout para o backend.
-                // As variáveis 'token', 'apiKey', 'criptoKey' ainda estão disponíveis
-                // neste escopo da função, mesmo após a limpeza do localStorage.
                 await sendAuthenticatedRequest(`${API_BASE_URL}/auth/logout`, "POST");
                 console.log("Logout bem-sucedido no backend.");
             } catch (error) {
                 console.error("Erro ao fazer logout no backend (mas credenciais locais já foram limpas):", error);
-                // O frontend já está limpo, então este erro no backend é secundário para o usuário.
             } finally {
-                // PASSO 3: Redireciona para a página de login.
                 window.location.href = "./login.html";
             }
         });
@@ -358,17 +465,14 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Verifica se o usuário é administrador (existente)
-    // Nota: Certifique-se de que o elemento com ID "admin-option" exista no seu HTML
-    // se você espera que esta lógica funcione.
-    const userPayload = decodeToken(token); // Renomeado para evitar conflito com 'payload' de outros scripts
+    const userPayload = decodeToken(token);
     if (userPayload && userPayload.userType === "Administrator") {
-        const adminOption = document.getElementById("admin-option");
+        const adminOption = document.getElementById("admin-option"); // Certifique-se de que este ID existe no HTML se você quiser exibi-lo
         if (adminOption) {
-            adminOption.style.display = "block"; // Ou remova 'display: none;' do CSS
+            adminOption.style.display = "block";
         }
     }
 });
-
 
 
 // document.addEventListener("DOMContentLoaded", function () {

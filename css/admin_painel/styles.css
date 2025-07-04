@@ -52,9 +52,10 @@ html, body {
     border: 1px solid var(--cor-primaria);
     padding: 20px;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-    max-width: 800px;
+    max-width: 95%; /* Ajustado para ser mais flexível */
     width: 100%;
     margin: auto;
+    margin-bottom: 20px; /* Adiciona espaço entre os cards */
 }
 
 /* Ajuste de largura para os formulários e tabelas */
@@ -94,16 +95,116 @@ html, body {
 }
 
 /* Tabelas */
+/* Estilos gerais para todas as tabelas padronizadas */
 .table {
     background-color: var(--cor-secundaria);
     color: var(--cor-texto);
     border: 1px solid var(--cor-primaria);
-    text-align: center;
+    text-align: center; /* Alinhamento centralizado para o conteúdo da célula */
+    width: 100%; /* Garante que a tabela use toda a largura disponível */
 }
-.table th {
+
+/* Ajustes para o cabeçalho da tabela */
+.table thead th {
     background-color: var(--cor-primaria);
     color: #ffffff;
+    vertical-align: middle;
+    padding: 10px;
+    border: 1px solid var(--cor-primaria); /* Bordas para o cabeçalho */
 }
-.table tbody tr:hover {
-    background-color: rgba(255, 87, 87, 0.1);
+
+/* Ajustes para o corpo da tabela */
+.table tbody td {
+    padding: 8px;
+    vertical-align: middle;
+    border: 1px solid #dee2e6; /* Bordas suaves para o corpo da tabela */
+    color: var(--cor-texto);
+}
+
+/* Estilo para linhas zebradas, mantendo a paleta de cores */
+.table-striped > tbody > tr:nth-of-type(odd) > * {
+    background-color: rgba(118, 23, 23, 0.05); /* Um tom muito claro do vermelho primário */
+}
+
+/* Estilo para hover nas linhas, mantendo a paleta de cores */
+.table-hover > tbody > tr:hover > * {
+    background-color: rgba(118, 23, 23, 0.1); /* Um tom um pouco mais escuro no hover */
+}
+
+/* Estilos específicos de largura para a tabela de Log de Atividades do Sistema */
+#logActivityTable th,
+#logActivityTable td {
+    /* Por padrão, permite quebra de linha para a maioria das colunas */
+    white-space: normal; 
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#logActivityTable th:nth-child(1),
+#logActivityTable td:nth-child(1) { /* ID */
+    width: 5%;
+    min-width: 50px;
+}
+
+#logActivityTable th:nth-child(2),
+#logActivityTable td:nth-child(2) { /* Operação */
+    width: 15%;
+    min-width: 120px;
+}
+
+#logActivityTable th:nth-child(3),
+#logActivityTable td:nth-child(3) { /* Descrição */
+    width: 25%;
+    min-width: 200px;
+    max-width: 300px; /* Limita a largura para descrições longas */
+}
+
+#logActivityTable th:nth-child(4),
+#logActivityTable td:nth-child(4) { /* Timestamp */
+    width: 15%;
+    min-width: 140px;
+}
+
+#logActivityTable th:nth-child(5),
+#logActivityTable td:nth-child(5) { /* ID Usuário */
+    width: 10%;
+    min-width: 80px;
+}
+
+#logActivityTable th:nth-child(6),
+#logActivityTable td:nth-child(6) { /* IP */
+    width: 10%;
+    min-width: 100px;
+}
+
+#logActivityTable th:nth-child(7),
+#logActivityTable td:nth-child(7) { /* User Agent */
+    width: 10%;
+    min-width: 120px;
+}
+
+#logActivityTable th:nth-child(8),
+#logActivityTable td:nth-child(8) { /* Status */
+    width: 10%;
+    min-width: 80px;
+}
+
+/* Estilo para os controles de paginação */
+.pagination .page-item .page-link {
+    background-color: var(--cor-secundaria);
+    color: var(--cor-primaria);
+    border: 1px solid var(--cor-primaria);
+}
+
+.pagination .page-item.active .page-link {
+    background-color: var(--cor-primaria);
+    color: #ffffff;
+    border-color: var(--cor-primaria);
+}
+
+.pagination .page-item.disabled .page-link {
+    color: #6c757d; /* Cor cinza para desabilitado */
+    pointer-events: none;
+    background-color: #e9ecef;
+    border-color: #dee2e6;
 }

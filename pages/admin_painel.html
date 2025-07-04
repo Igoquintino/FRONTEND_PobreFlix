@@ -60,17 +60,20 @@
 
         <div class="card p-3 mb-4">
             <h2 class="text-center">Histórico de Acesso</h2>
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>ID do Catálogo</th>
-                        <th>Visualizações</th>
-                        <th>Atualizado em</th>
-                    </tr>
-                </thead>
-                <tbody id="logAccessTableBody"></tbody>
-            </table>
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>ID do Catálogo</th>
+                            <th>Visualizações</th>
+                            <th>Atualizado em</th>
+                        </tr>
+                    </thead>
+                    <tbody id="logAccessTableBody">
+                         </tbody>
+                </table>
+            </div>
         </div>
 
         <div class="card p-3 mb-4">
@@ -78,28 +81,35 @@
             <div id="apiUsage" class="alert alert-info">Carregando dados de uso da API...</div>
         </div>
 
-        <!-- Nova Seção: Log de Atividades -->
         <div class="card p-3 mb-4">
             <h2 class="text-center">Log de Atividades do Sistema</h2>
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Operação</th>
-                        <th>Descrição</th>
-                        <th>Timestamp</th>
-                        <th>ID Usuário</th>
-                        <th>IP</th>
-                        <th>User Agent</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody id="logActivitiesTableBody">
-                    <!-- Logs serão preenchidos dinamicamente -->
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table id="logActivityTable" class="table table-striped table-bordered table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Operação</th>
+                            <th>Descrição</th>
+                            <th>Timestamp</th>
+                            <th>ID Usuário</th>
+                            <th>IP</th>
+                            <th>User Agent</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="logActivitiesTableBody">
+                        <tr>
+                            <td colspan="8" class="text-center">Carregando logs de atividade...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <nav aria-label="Paginação do Log de Atividade" class="mt-4">
+                <ul class="pagination justify-content-center" id="paginationControls">
+                    </ul>
+            </nav>
         </div>
-        
+                
     </div>
 
     <footer class="footer mt-auto">
@@ -108,8 +118,7 @@
         </div>
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
-    <script src="../js/painel/script.js" type="module"></script>
-</body>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script><script type="module" src="../js/painel/script.js"></script>
+    </body>
 </html>

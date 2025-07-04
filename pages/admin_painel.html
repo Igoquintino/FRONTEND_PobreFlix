@@ -1,7 +1,3 @@
-
-
-
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -81,6 +77,29 @@
             <h2 class="text-center">Uso da API Externa</h2>
             <div id="apiUsage" class="alert alert-info">Carregando dados de uso da API...</div>
         </div>
+
+        <!-- Nova Seção: Log de Atividades -->
+        <div class="card p-3 mb-4">
+            <h2 class="text-center">Log de Atividades do Sistema</h2>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Operação</th>
+                        <th>Descrição</th>
+                        <th>Timestamp</th>
+                        <th>ID Usuário</th>
+                        <th>IP</th>
+                        <th>User Agent</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="logActivitiesTableBody">
+                    <!-- Logs serão preenchidos dinamicamente -->
+                </tbody>
+            </table>
+        </div>
+        
     </div>
 
     <footer class="footer mt-auto">
